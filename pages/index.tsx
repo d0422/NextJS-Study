@@ -1,4 +1,7 @@
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface Imovie {
@@ -7,26 +10,35 @@ interface Imovie {
   poster_path: string;
 }
 
-export default function Home() {
-  const [movies, setMovies] = useState<Imovie[]>([]);
-  useEffect(() => {
-    fetch("/api/movies")
-      .then((res) => res.json())
-      .then((data) => {
-        setMovies(data.results);
-      });
-  }, []);
-  console.log(movies);
+export default function Home({
+  results,
+}: InferGetServerSidePropsType<GetServerSideProps>) {
+  const router = useRouter();
+  const move = (movie: Imovie) => {
+    router.push(
+      {
+        pathname: `/movies/${movie.id}`,
+        query: {
+          title: movie.original_title,
+        },
+      },
+      `/movies/${movie.id}`
+    );
+  };
   return (
     <div>
       <Head>
         <title>Home | Next Movie</title>
       </Head>
       <div className="container">
-        {movies?.map((movie) => (
-          <div className="movie" key={movie.id}>
-            <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
-            <h4>{movie?.original_title}</h4>
+        {results?.map((movie: Imovie) => (
+          <div onClick={() => move(movie)} key={movie.id}>
+            <div className="movie">
+              <img
+                src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+              />
+              <h4>{movie?.original_title}</h4>
+            </div>
           </div>
         ))}
       </div>
@@ -53,4 +65,13 @@ export default function Home() {
       `}</style>
     </div>
   );
+}
+export async function getServerSideProps() {
+  const data = await fetch(`http://localhost:3000/api/movies`);
+  const { results } = await data.json();
+  return {
+    props: {
+      results,
+    },
+  };
 }

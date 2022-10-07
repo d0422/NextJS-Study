@@ -6,7 +6,7 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/",
+        source: "/123",
         destination: "/",
         permanent: false,
       },
@@ -17,6 +17,10 @@ const nextConfig = {
       {
         source: "/api/movies",
         destination: `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`,
+      },
+      {
+        source: "/api/movies/:id",
+        destination: `https://api.themoviedb.org/3/movie/":id?api_key=${API_KEY}`,
       },
     ];
   },
