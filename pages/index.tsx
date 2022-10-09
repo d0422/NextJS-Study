@@ -15,15 +15,7 @@ export default function Home({
 }: InferGetServerSidePropsType<GetServerSideProps>) {
   const router = useRouter();
   const move = (movie: Imovie) => {
-    router.push(
-      {
-        pathname: `/movies/${movie.id}`,
-        query: {
-          title: movie.original_title,
-        },
-      },
-      `/movies/${movie.id}`
-    );
+    router.push(`/movies/${movie.original_title}/${movie.id}`);
   };
   return (
     <div>
